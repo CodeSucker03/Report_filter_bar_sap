@@ -1,4 +1,4 @@
-<mvc:View controllerName="ui5.app.controller.DynamicPageListReport" height="100%"
+<mvc:View xmlns:table="sap.ui.table" controllerName="ui5.app.controller.DynamicPageListReport" height="100%"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:core="sap.ui.core"
     xmlns="sap.m"
@@ -22,8 +22,7 @@
         <f:header>
             <f:DynamicPageHeader>
                 <f:content>
-                    <fb:FilterBar id="filterbar" persistencyKey="myPersKey" useToolbar="false" 
-                    search=".onSearch" filterChange=".onFilterChange" afterVariantLoad=".onAfterVariantLoad">
+                    <fb:FilterBar id="filterbar" persistencyKey="myPersKey" useToolbar="false" search=".onSearch" filterChange=".onFilterChange" afterVariantLoad=".onAfterVariantLoad">
                         <fb:filterGroupItems>
                             <fb:FilterGroupItem name="Name" label="Name" groupName="Group1" visibleInFilterBar="true">
                                 <fb:control>
@@ -61,7 +60,7 @@
             </f:DynamicPageHeader>
         </f:header>
         <f:content>
-            <Table id="table" inset="false" items="{
+            <!-- <Table id="table" inset="false" items="{
 						path: '/ProductCollection'
 					}">
                 <columns>
@@ -74,6 +73,7 @@
                     <Column minScreenWidth="Tablet" demandPopin="true">
                         <Text text="SupplierName"/>
                     </Column>
+                    
                 </columns>
 
                 <items>
@@ -85,7 +85,41 @@
                         </cells>
                     </ColumnListItem>
                 </items>
-            </Table>
+            </Table> -->
+            <table:Table id="table" rows="{/ProductCollection}" selectionMode="MultiToggle">
+                <table:extension>
+                    <OverflowToolbar style="Clear">
+                        <Title id="title" text="Products"/>
+                    </OverflowToolbar>
+                </table:extension>
+                <table:columns>
+                    <table:Column >
+                        <Label text="Product Id" />
+                        <table:template>
+                            <Input value="{ProductId}"/>
+                        </table:template>
+                    </table:Column>
+                    <table:Column>
+                        <Label text="Name" />
+                        <table:template>
+                            <Text text="{Name}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column>
+                        <Label text="Category" />
+                        <table:template>
+                            <Text text="{Category}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column>
+                        <Label text="SupplierName" />
+                        <table:template>
+                            <Text text="{SupplierName}" />
+                        </table:template>
+                    </table:Column>
+                </table:columns>
+
+            </table:Table>
         </f:content>
     </f:DynamicPage>
 </mvc:View>

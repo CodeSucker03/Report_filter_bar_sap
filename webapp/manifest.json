@@ -18,6 +18,7 @@
   },
   "sap.ui": {
     "technology": "UI5",
+    "fullWidth": true,
     "icons": {
       "icon": "",
       "favIcon": "",
@@ -38,7 +39,8 @@
       "minUI5Version": "1.140.0",
       "libs": {
         "sap.m": {},
-        "sap.ui.core": {}
+        "sap.ui.core": {},
+        "sap.ui.export": {}
       }
     },
     "contentDensities": {
