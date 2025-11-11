@@ -159,7 +159,8 @@
                 </table:columns>
 
             </table:Table> -->
-            <table:Table id="table" rowActionCount="1" rows="{table>/rows}" rowSelectionChange=".onRowChange" selectionMode="MultiToggle">
+            <table:Table id="table" rowActionCount="1" rows="{table>/rows}" 
+            rowSelectionChange=".onRowChange" selectionMode="MultiToggle">
                 <table:extension>
                     <OverflowToolbar class="sapMTBHeader-CTX">
                         <Title text="Leave Request" />

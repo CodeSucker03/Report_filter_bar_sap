@@ -1,44 +1,66 @@
 <core:FragmentDefinition xmlns="sap.m"
     xmlns:core="sap.ui.core">
-    <Dialog id="helloDialog">
-        <content>
-            <VBox >
-                <Label text="Leave Type" labelFor="LeaveType" required="true" />
-                <ComboBox id="LeaveTypeA" name="LeaveType" items="{master>/LeaveType}" required="true">
+    <Dialog
+    id="addDialog"
+    title="New Leave Request"
+    class="sapUiContentPadding sapUiNoContentPadding sapUiResponsivePadding"
+    >
+
+    <content>
+        <VBox class="sapUiMediumMarginBeginEnd sapUiSmallMarginTop sapUiSmallMarginBottom" renderType="Bare">
+            
+             <VBox class="sapUiSmallMarginBottom" >
+                <Label text="Leave Type" required="true" width="8rem"/>
+                <ComboBox id="LeaveTypeA" name="LeaveType" width="100%" items="{master>/LeaveType}" required="true">
                     <core:Item key="{master>FieldKey}" text="{master>FieldValue}" />
                 </ComboBox>
+            </VBox>
+            <VBox class="sapUiSmallMarginBottom" >
+                <Label text="Start Date" required="true" width="8rem"/>
+                <DatePicker id="StartDateA" name="StartDate" displayFormat="dd.MM.yyyy" valueFormat="yyyyMMdd" width="100%" required="true" />
+            </VBox>
 
-                <Label text="Start Date" labelFor="StartDate" required="true" />
-                <DatePicker id="StartDateA" name="StartDate" displayFormat="dd.MM.yyyy" valueFormat="yyyyMMdd" required="true" />
+            <VBox class="sapUiSmallMarginBottom" >
+                <Label text="End Date" required="true" width="8rem"/>
+                <DatePicker id="EndDateA" name="EndDate" displayFormat="dd.MM.yyyy" valueFormat="yyyyMMdd" width="100%" required="true" />
+            </VBox>
 
-                <Label text="End Date" labelFor="EndDate" required="true" />
-                <DatePicker id="EndDateA" name="EndDate" displayFormat="dd.MM.yyyy" valueFormat="yyyyMMdd" required="true" />
-
-                <Label text="Leave Time" labelFor="TimeSlot" required="true" />
-                <RadioButtonGroup id="TimeSlotA" columns="3" buttons="{
-                        path: 'master>/TimeSlot',
-                        templateShareable: false
-                    }">
+            <VBox class="sapUiSmallMarginBottom">
+                <Label text="Time Slot" required="true" width="8rem"/>
+                <RadioButtonGroup
+                    id="TimeSlotA"
+                    columns="3"
+                    buttons="{ path: 'master>/TimeSlot', templateShareable: false }"
+                    class="sapUiTinyMarginBegin">
                     <buttons>
                         <RadioButton text="{master>FieldValue}" />
                     </buttons>
                 </RadioButtonGroup>
-
-                <Label text="Reason" labelFor="ReasonText" required="true" />
-                <TextArea id="ReasonText" name="Reason" required="true" />
-
             </VBox>
 
-        </content>
-        <footer>
-            <Toolbar >
-                <Button text="Save Draft"></Button>
-                <Button text="Send" press=".onCloseDialog"/>
+            <VBox class="sapUiSmallMarginBottom">
+                <Label text="Reason" required="true"/>
+                <TextArea
+                    id="ReasonText"
+                    name="Reason"
+                    width="100%"
+                    growing="true"
+                    growingMaxLines="5"
+                    placeholder="Enter your reason here"
+                    required="true" />
+            </VBox>
 
-                <Button text="Cancel" press=".onCloseDialog"/>
+        </VBox>
+    </content>
 
-            </Toolbar>
-        </footer>
+    <footer>
+        <Toolbar
+        >
+            <Button text="Save Draft" type="Ghost"/>
+            <Button text="Send" type="Emphasized" press=".onSendRequest"/>
+            <Button text="Cancel" press=".onCloseDialog"/>
+        </Toolbar>
+    </footer>
+</Dialog>
 
-    </Dialog>
 </core:FragmentDefinition>
