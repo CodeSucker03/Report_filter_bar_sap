@@ -1,0 +1,53 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog id="editDialog" title="Edit Request" class="sapUiContentPadding sapUiNoContentPadding sapUiResponsivePadding">
+
+        <content>
+            <VBox class="sapUiMediumMarginBeginEnd sapUiSmallMarginTop sapUiSmallMarginBottom" renderType="Bare">
+
+                <VBox class="sapUiSmallMarginBottom">
+                    <Label text="Leave Type" required="true" width="8rem" />
+                    <ComboBox id="LeaveTypeE" name="LeaveType" width="100%" selectedKey="{edit>/LeaveType}" items="{master>/LeaveType}" required="true">
+                        <core:Item key="{master>FieldKey}" text="{master>FieldValue}" />
+                    </ComboBox>
+                </VBox>
+
+                <VBox class="sapUiSmallMarginBottom">
+                    <Label text="Start Date" required="true" width="8rem" />
+                    <DatePicker id="StartDateE" name="StartDate" displayFormat="dd.MM.yyyy" valueFormat="yyyyMMdd" value="{edit>/StartDate}" width="100%" required="true" />
+                </VBox>
+
+                <VBox class="sapUiSmallMarginBottom">
+                    <Label text="End Date" required="true" width="8rem" />
+                    <DatePicker id="EndDateE" name="EndDate" displayFormat="dd.MM.yyyy" valueFormat="yyyyMMdd" value="{edit>/EndDate}" width="100%" required="true" />
+                </VBox>
+
+                <VBox class="sapUiSmallMarginBottom">
+                    <Label text="Time Slot" required="true" width="8rem" />
+                    <RadioButtonGroup id="TimeSlotE" columns="3" selectedIndex="{edit>/TimeSlot}" buttons="{ path: 'master>/TimeSlot', templateShareable: false }" class="sapUiTinyMarginBegin">
+                        <buttons>
+                            <RadioButton text="{master>FieldValue}" />
+                        </buttons>
+                    </RadioButtonGroup>
+                </VBox>
+
+                <VBox class="sapUiSmallMarginBottom">
+                    <Label text="Reason" width="8rem" />
+                    <Input id="ReasonE" name="Reason" value="{edit>/Reason}" width="100%" placeholder="Enter reason for leave..." />
+                </VBox>
+
+
+            </VBox>
+        </content>
+
+        <footer>
+            <Toolbar
+        >
+                <Button text="Save Draft" type="Ghost"/>
+                <Button text="Send" type="Emphasized" press=".onSendRequest"/>
+                <Button text="Cancel" press=".onCloseEditDialog"/>
+            </Toolbar>
+        </footer>
+    </Dialog>
+
+</core:FragmentDefinition>

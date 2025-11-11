@@ -41,7 +41,7 @@
             <VBox class="sapUiSmallMarginBottom">
                 <Label text="Reason" required="true"/>
                 <TextArea
-                    id="ReasonText"
+                    id="ReasonA"
                     name="Reason"
                     width="100%"
                     growing="true"
@@ -58,7 +58,7 @@
         >
             <Button text="Save Draft" type="Ghost"/>
             <Button text="Send" type="Emphasized" press=".onSendRequest"/>
-            <Button text="Cancel" press=".onCloseDialog"/>
+            <Button text="Cancel" press=".onCloseAddDialog"/>
         </Toolbar>
     </footer>
 </Dialog>

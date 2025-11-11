@@ -166,8 +166,9 @@
                         <Title text="Leave Request" />
                         <ToolbarSpacer />
                         <Button id="addButton" text="Add" tooltip="Add" type="Emphasized" 
-                        icon="sap-icon://add" press=".onOpenDialog" />
-                        <Button id="editButton" text="Edit" tooltip="Edit" type="Emphasized" icon="sap-icon://edit" enabled="false" />
+                        icon="sap-icon://add" press=".onOpenAddDialog" />
+                        <Button id="editButton" text="Edit" tooltip="Edit" type="Emphasized" 
+                        icon="sap-icon://edit" enabled="false" press=".onOpenEdit" />
                         <Button id="deleteButton" text="Delete" tooltip="Delete" type="Reject" icon="sap-icon://delete" enabled="false" />
 
                         <ToolbarSeparator />
