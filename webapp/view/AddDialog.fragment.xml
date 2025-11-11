@@ -1,0 +1,44 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog id="helloDialog">
+        <content>
+            <VBox >
+                <Label text="Leave Type" labelFor="LeaveType" required="true" />
+                <ComboBox id="LeaveTypeA" name="LeaveType" items="{master>/LeaveType}" required="true">
+                    <core:Item key="{master>FieldKey}" text="{master>FieldValue}" />
+                </ComboBox>
+
+                <Label text="Start Date" labelFor="StartDate" required="true" />
+                <DatePicker id="StartDateA" name="StartDate" displayFormat="dd.MM.yyyy" valueFormat="yyyyMMdd" required="true" />
+
+                <Label text="End Date" labelFor="EndDate" required="true" />
+                <DatePicker id="EndDateA" name="EndDate" displayFormat="dd.MM.yyyy" valueFormat="yyyyMMdd" required="true" />
+
+                <Label text="Leave Time" labelFor="TimeSlot" required="true" />
+                <RadioButtonGroup id="TimeSlotA" columns="3" buttons="{
+                        path: 'master>/TimeSlot',
+                        templateShareable: false
+                    }">
+                    <buttons>
+                        <RadioButton text="{master>FieldValue}" />
+                    </buttons>
+                </RadioButtonGroup>
+
+                <Label text="Reason" labelFor="ReasonText" required="true" />
+                <TextArea id="ReasonText" name="Reason" required="true" />
+
+            </VBox>
+
+        </content>
+        <footer>
+            <Toolbar >
+                <Button text="Save Draft"></Button>
+                <Button text="Send" press=".onCloseDialog"/>
+
+                <Button text="Cancel" press=".onCloseDialog"/>
+
+            </Toolbar>
+        </footer>
+
+    </Dialog>
+</core:FragmentDefinition>

@@ -19,7 +19,7 @@
                 </f:snappedContent>
             </f:DynamicPageTitle>
         </f:title>
-        <f:header>
+        <!-- <f:header>
             <f:DynamicPageHeader>
                 <f:content>
                     <fb:FilterBar id="filterbar" persistencyKey="myPersKey" useToolbar="false" search=".onSearch" filterChange=".onFilterChange" afterVariantLoad=".onAfterVariantLoad">
@@ -58,6 +58,45 @@
                     </fb:FilterBar>
                 </f:content>
             </f:DynamicPageHeader>
+        </f:header> -->
+        <f:header>
+            <f:DynamicPageHeader>
+                <f:content>
+                    <fb:FilterBar id="filterBar" persistencyKey="EmployeeTable" useToolbar="false" search=".onSearch" filterChange="onFilterChange" afterVariantLoad="onAfterVariantLoad">
+                        <fb:filterGroupItems>
+                            <fb:FilterGroupItem name="StartDate" label="Ngày bắt đầu" groupName="Group1" visibleInFilterBar="true">
+                                <fb:control>
+                                    <DatePicker name="StartDate" displayFormat="dd.MM.yyyy" valueFormat="yyyyMMdd" />
+                                </fb:control>
+                            </fb:FilterGroupItem>
+
+                            <fb:FilterGroupItem name="LeaveType" label="Loại phép" groupName="Group1" visibleInFilterBar="true">
+                                <fb:control>
+                                    <ComboBox name="LeaveType" selectionChange="onSelectionChange" items="{master>/LeaveType}">
+                                        <core:Item key="{master>FieldKey}" text="{master>FieldValue}" />
+                                    </ComboBox>
+                                </fb:control>
+                            </fb:FilterGroupItem>
+
+                            <fb:FilterGroupItem name="Status" label="Trạng thái" groupName="Group1" visibleInFilterBar="true">
+                                <fb:control>
+                                    <ComboBox name="Status" selectionChange="onSelectionChange" items="{master>/Status}">
+                                        <core:Item key="{master>FieldKey}" text="{master>FieldValue}" />
+                                    </ComboBox>
+                                </fb:control>
+                            </fb:FilterGroupItem>
+
+                            <fb:FilterGroupItem name="TimeSlot" label="Khung gio" groupName="Group1" visibleInFilterBar="true">
+                                <fb:control>
+                                        <ComboBox name="Status" selectionChange="onSelectionChange" items="{master>/TimeSlot}">
+                                            <core:Item key="{master>FieldKey}" text="{master>FieldValue}" />
+                                        </ComboBox>
+                                </fb:control>
+                            </fb:FilterGroupItem>
+                        </fb:filterGroupItems>
+                    </fb:FilterBar>
+                </f:content>
+            </f:DynamicPageHeader>
         </f:header>
         <f:content>
             <!-- <Table id="table" inset="false" items="{
@@ -86,7 +125,7 @@
                     </ColumnListItem>
                 </items>
             </Table> -->
-            <table:Table id="table" rows="{/ProductCollection}" selectionMode="MultiToggle">
+            <!-- <table:Table id="table" rows="{/ProductCollection}" selectionMode="MultiToggle">
                 <table:extension>
                     <OverflowToolbar style="Clear">
                         <Title id="title" text="Products"/>
@@ -119,7 +158,129 @@
                     </table:Column>
                 </table:columns>
 
+            </table:Table> -->
+            <table:Table id="table" rowActionCount="1" rows="{table>/rows}" rowSelectionChange=".onRowChange" selectionMode="MultiToggle">
+                <table:extension>
+                    <OverflowToolbar class="sapMTBHeader-CTX">
+                        <Title text="Leave Request" />
+                        <ToolbarSpacer />
+                        <Button id="addButton" text="Add" tooltip="Add" type="Emphasized" 
+                        icon="sap-icon://add" press=".onOpenDialog" />
+                        <Button id="editButton" text="Edit" tooltip="Edit" type="Emphasized" icon="sap-icon://edit" enabled="false" />
+                        <Button id="deleteButton" text="Delete" tooltip="Delete" type="Reject" icon="sap-icon://delete" enabled="false" />
+
+                        <ToolbarSeparator />
+                        <Button icon="sap-icon://excel-attachment" tooltip="Export to Excel" />
+                    </OverflowToolbar>
+                </table:extension>
+                <table:noData>
+                    <IllustratedMessage illustrationType="sapIllus-NoSearchResults" enableVerticalResponsiveness="true" />
+                </table:noData>
+                <table:columns>
+                    <table:Column id="RequestId" sortProperty="RequestId" filterProperty="RequestId">
+                        <table:label>
+                            <Label text="Mã đơn nghỉ" />
+                        </table:label>
+                        <table:template>
+                            <ObjectIdentifier title="{table>RequestId}" titleActive="true" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column id="EmployeeId" sortProperty="EmployeeId" filterProperty="EmployeeId">
+                        <table:label>
+                            <Label text="Mã nhân viên" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{table>EmployeeId}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column id="CreatedBy" sortProperty="CreatedBy" filterProperty="CreatedBy">
+                        <table:label>
+                            <Label text="Người tạo" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{table>CreatedBy}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column id="CreatedAt" sortProperty="CreatedAt" filterProperty="CreatedAt">
+                        <table:label>
+                            <Label text="Ngày tạo" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{
+                                    path: 'table>CreatedAt',
+                                    type: 'sap.ui.model.type.DateTime'
+                                    
+                                }" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column id="LeaveType" sortProperty="LeaveType" filterProperty="LeaveType">
+                        <table:label>
+                            <Label text="Loại nghỉ phép" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{table>LeaveType}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column id="TimeSlot" sortProperty="TimeSlot" filterProperty="TimeSlot">
+                        <table:label>
+                            <Label text="Khung thời gian" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{table>TimeSlot}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column id="StartDate" sortProperty="StartDate" filterProperty="StartDate">
+                        <table:label>
+                            <Label text="Ngày bắt đầu" />
+                        </table:label>
+                        <table:template>
+                            <Text text=
+                            "{path: 'table>StartDate', 
+                             type: 'sap.ui.model.type.DateTime'
+                             
+                             }" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column id="EndDate" sortProperty="EndDate" filterProperty="EndDate">
+                        <table:label>
+                            <Label text="Ngày kết thúc" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{path: 'table>EndDate', type: 'sap.ui.model.type.DateTime', formatOptions: { style: 'medium' }}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column id="Reason" sortProperty="Reason" filterProperty="Reason">
+                        <table:label>
+                            <Label text="Lý do nghỉ" />
+                        </table:label>
+                        <table:template>
+                            <Text text="{table>Reason}" />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column id="Status" sortProperty="Status" filterProperty="Status">
+                        <table:label>
+                            <Label text="Trạng thái" />
+                        </table:label>
+                        <table:template>
+                            <ObjectStatus text="{= ${table>Status} === '01' ? 'New' : ${table>Status} === '02' ? 'Approved' : 'Pending' }" inverted="true" icon="sap-icon://information" state="{= ${table>Status} === '01' ? 'Information' : ${table>Status} === '02' ? 'Success' : 'Warning' }" />
+                        </table:template>
+                    </table:Column>
+                </table:columns>
+                <table:rowActionTemplate>
+                    <table:RowAction>
+                        <table:RowActionItem type="Navigation" />
+                    </table:RowAction>
+                </table:rowActionTemplate>
             </table:Table>
         </f:content>
     </f:DynamicPage>
+
 </mvc:View>
