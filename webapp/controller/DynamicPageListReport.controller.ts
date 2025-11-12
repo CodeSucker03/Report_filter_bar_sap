@@ -28,6 +28,10 @@ import Table from "sap/ui/table/Table";
 import MessageToast from "sap/m/MessageToast";
 import Button from "sap/m/Button";
 import Dialog from "sap/m/Dialog";
+import { ValueState } from "sap/ui/core/library";
+import Spreadsheet from "sap/ui/export/Spreadsheet";
+import { EdmType } from "sap/ui/export/library";
+import { Column } from "../types/utils";
 
 interface IFilterData {
   fieldName: string;
@@ -44,7 +48,6 @@ export default class DynamicPageListReport extends Base {
   private oTable: Table | null;
   private editDialog: Dialog;
   private addDialog: Dialog;
-
 
   private async logLoadedData(jsonModel: JSONModel): Promise<void> {
     await jsonModel.loadData(
@@ -325,7 +328,8 @@ export default class DynamicPageListReport extends Base {
   public onRowChange(): void {
     const oTable = this.byId("table") as Table;
     const aSelectedIndices = oTable.getSelectedIndices();
-
+    const tableModel = this.getView()?.getModel("table") as JSONModel;
+    tableModel.setProperty("/selectedIndices", aSelectedIndices);
     const oEditButton = this.byId("editButton") as Button;
     const oDeleteButton = this.byId("deleteButton") as Button;
 
@@ -343,7 +347,6 @@ export default class DynamicPageListReport extends Base {
       const oEditModel = new JSONModel(Object.assign({}, oSelectedData));
       this.getView()?.setModel(oEditModel, "edit");
       MessageToast.show(`Selected row: ${sPath}`);
-      
     } else if (aSelectedIndices.length === 0) {
       MessageToast.show("No item selected");
     } else {
@@ -487,6 +490,14 @@ export default class DynamicPageListReport extends Base {
     });
     this.oTable?.setShowOverlay(false);
   }
+  public formatStatusState(statusKey: string): ValueState {
+    const map: Record<string, ValueState> = {
+      "01": ValueState.Information,
+      "02": ValueState.Success,
+      "03": ValueState.Error,
+    };
+    return map[statusKey] ?? ValueState.None;
+  }
 
   // #region get MasterData
   private async onGetMasterData(): Promise<boolean> {
@@ -501,9 +512,9 @@ export default class DynamicPageListReport extends Base {
 
       oDataModel.read("/FieldValueHelpSet", {
         success: (response: ODataResponse<ValueHelpItem[]>) => {
-          const status: unknown[] = [];
-          const leaveType: unknown[] = [];
-          const timeSlot: unknown[] = [];
+          const status: ValueHelpItem[] = [];
+          const leaveType: ValueHelpItem[] = [];
+          const timeSlot: ValueHelpItem[] = [];
           console.log("OData read success:", response.results);
           response.results.forEach((item: ValueHelpItem) => {
             switch (item.FieldName) {
@@ -548,7 +559,7 @@ export default class DynamicPageListReport extends Base {
     // is only called from within the loaded dialog itself.
     (this.byId("addDialog") as Dialog)?.close();
   }
-  
+
   async onOpenEdit(): Promise<void> {
     this.editDialog ??= (await this.loadFragment({
       name: "ui5.app.view.editDialog",
@@ -560,4 +571,44 @@ export default class DynamicPageListReport extends Base {
     // is only called from within the loaded dialog itself.
     (this.byId("editDialog") as Dialog)?.close();
   }
+
+  public onExportExcel(): void {
+    const Cols: Column[] = [
+      { label: "Mã đơn nghỉ", property: "RequestId", type: EdmType.String },
+      { label: "Loại phép", property: "LeaveType", type: EdmType.String },
+      {
+        label: "Ngày bắt đầu",
+        property: "StartDate",
+        type: EdmType.Date,
+        format: "dd.MM.yyyy",
+      },
+      {
+        label: "Ngày kết thúc",
+        property: "EndDate",
+        type: EdmType.Date,
+        format: "dd.MM.yyyy",
+      },
+      { label: "TimeSlot", property: "TimeSlot", type: EdmType.String },
+      { label: "Lý do xin nghỉ", property: "Reason", type: EdmType.String },
+      { label: "Trạng thái", property: "Status", type: EdmType.String },
+    ];
+
+    const settings = {
+      workbook: { columns: Cols },
+      dataSource: this.getModel<JSONModel>("table").getProperty("/rows"),
+      fileName: "LeaveRequests.xlsx",
+      Worker: false,
+    };
+
+    const spreadsheet = new Spreadsheet(settings);
+    spreadsheet
+      .build()
+      .then(() => {
+        console.log("Spreadsheet export successful");
+      })
+      .catch((err) => {
+        console.error("Spreadsheet export error:", err);
+      });
+  }
+  
 }

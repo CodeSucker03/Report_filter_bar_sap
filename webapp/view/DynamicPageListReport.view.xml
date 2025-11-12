@@ -72,7 +72,8 @@
                         <Button id="deleteButton" text="Delete" tooltip="Delete" type="Reject" icon="sap-icon://delete" enabled="false" />
 
                         <ToolbarSeparator />
-                        <Button icon="sap-icon://excel-attachment" tooltip="Export to Excel" />
+                        <Button icon="sap-icon://excel-attachment" tooltip="Export to Excel" 
+                        press=".onExportExcel" />
                     </OverflowToolbar>
                 </table:extension>
                 <table:noData>
@@ -193,7 +194,9 @@
                             <Label text="Trạng thái" />
                         </table:label>
                         <table:template>
-                            <ObjectStatus text="{= ${table>Status} === '01' ? 'New' : ${table>Status} === '02' ? 'Approved' : 'Rejected' }" inverted="true" icon="sap-icon://information" state="{= ${table>Status} === '01' ? 'Information' : ${table>Status} === '02' ? 'Success' : 'Warning' }" />
+                            <ObjectStatus text="{= ${table>Status} === '01' ? 'New' : ${table>Status} === '02' ? 'Approved' : 'Rejected' }" 
+                            inverted="true" icon="sap-icon://information" 
+                            state="{= ${table>Status} === '01' ? 'Information' : ${table>Status} === '02' ? 'Success' : 'Error' }" />
                         </table:template>
                     </table:Column>
                 </table:columns>
