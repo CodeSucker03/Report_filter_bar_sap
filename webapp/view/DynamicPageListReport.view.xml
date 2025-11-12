@@ -19,46 +19,6 @@
                 </f:snappedContent>
             </f:DynamicPageTitle>
         </f:title>
-        <!-- <f:header>
-            <f:DynamicPageHeader>
-                <f:content>
-                    <fb:FilterBar id="filterbar" persistencyKey="myPersKey" useToolbar="false" search=".onSearch" filterChange=".onFilterChange" afterVariantLoad=".onAfterVariantLoad">
-                        <fb:filterGroupItems>
-                            <fb:FilterGroupItem name="Name" label="Name" groupName="Group1" visibleInFilterBar="true">
-                                <fb:control>
-                                    <MultiComboBox name="Name" selectionChange=".onSelectionChange" items="{
-												path: '/ProductNames',
-												templateShareable: true
-											}">
-                                        <core:Item key="{key}" text="{name}"/>
-                                    </MultiComboBox>
-                                </fb:control>
-                            </fb:FilterGroupItem>
-                            <fb:FilterGroupItem name="Category" label="Category" groupName="Group1" visibleInFilterBar="true">
-                                <fb:control>
-                                    <MultiComboBox name="Category" selectionChange=".onSelectionChange" items="{
-												path: '/ProductCategories',
-												templateShareable: true
-											}">
-                                        <core:Item key="{key}" text="{name}"/>
-                                    </MultiComboBox>
-                                </fb:control>
-                            </fb:FilterGroupItem>
-                            <fb:FilterGroupItem name="SupplierName" label="SupplierName" groupName="Group1" visibleInFilterBar="true">
-                                <fb:control>
-                                    <MultiComboBox name="SupplierName" selectionChange=".onSelectionChange" items="{
-												path: '/ProductSuppliers',
-												templateShareable: true
-											}">
-                                        <core:Item key="{key}" text="{name}"/>
-                                    </MultiComboBox>
-                                </fb:control>
-                            </fb:FilterGroupItem>
-                        </fb:filterGroupItems>
-                    </fb:FilterBar>
-                </f:content>
-            </f:DynamicPageHeader>
-        </f:header> -->
         <f:header>
             <f:DynamicPageHeader>
                 <f:content>
@@ -99,66 +59,6 @@
             </f:DynamicPageHeader>
         </f:header>
         <f:content>
-            <!-- <Table id="table" inset="false" items="{
-						path: '/ProductCollection'
-					}">
-                <columns>
-                    <Column minScreenWidth="Tablet" demandPopin="true">
-                        <Text text="Name"/>
-                    </Column>
-                    <Column minScreenWidth="Tablet" demandPopin="true">
-                        <Text text="Category"/>
-                    </Column>
-                    <Column minScreenWidth="Tablet" demandPopin="true">
-                        <Text text="SupplierName"/>
-                    </Column>
-                    
-                </columns>
-
-                <items>
-                    <ColumnListItem vAlign="Middle">
-                        <cells>
-                            <ObjectIdentifier title="{Name}" text="{ProductId}" />
-                            <Text text="{Category}" />
-                            <Text text="{SupplierName}" />
-                        </cells>
-                    </ColumnListItem>
-                </items>
-            </Table> -->
-            <!-- <table:Table id="table" rows="{/ProductCollection}" selectionMode="MultiToggle">
-                <table:extension>
-                    <OverflowToolbar style="Clear">
-                        <Title id="title" text="Products"/>
-                    </OverflowToolbar>
-                </table:extension>
-                <table:columns>
-                    <table:Column >
-                        <Label text="Product Id" />
-                        <table:template>
-                            <Input value="{ProductId}"/>
-                        </table:template>
-                    </table:Column>
-                    <table:Column>
-                        <Label text="Name" />
-                        <table:template>
-                            <Text text="{Name}" />
-                        </table:template>
-                    </table:Column>
-                    <table:Column>
-                        <Label text="Category" />
-                        <table:template>
-                            <Text text="{Category}" />
-                        </table:template>
-                    </table:Column>
-                    <table:Column>
-                        <Label text="SupplierName" />
-                        <table:template>
-                            <Text text="{SupplierName}" />
-                        </table:template>
-                    </table:Column>
-                </table:columns>
-
-            </table:Table> -->
             <table:Table id="table" rowActionCount="1" rows="{table>/rows}" 
             rowSelectionChange=".onRowChange" selectionMode="MultiToggle">
                 <table:extension>
@@ -211,10 +111,13 @@
                             <Label text="Ngày tạo" />
                         </table:label>
                         <table:template>
-                            <Text text="{
+                            <Text  text="{
                                     path: 'table>CreatedAt',
-                                    type: 'sap.ui.model.type.DateTime'
-                                    
+                                    type: 'sap.ui.model.type.DateTime',
+                                    formatOptions: {
+                                        pattern: 'dd.MM.yyyy',
+                                        UTC: true
+                                    }
                                 }" />
                         </table:template>
                     </table:Column>
@@ -224,7 +127,12 @@
                             <Label text="Loại nghỉ phép" />
                         </table:label>
                         <table:template>
-                            <Text text="{table>LeaveType}" />
+                            <Text text="
+                            {= ( ${table>LeaveType} === '01' ) ? 'Annual Leave'
+                                : ( ${table>LeaveType} === '02' ) ? 'Sick Leave'
+                                : ( ${table>LeaveType} === '03' ) ? 'Maternity Leave'
+                                : 'Unpaid Leave'
+                            }" />
                         </table:template>
                     </table:Column>
 
@@ -233,7 +141,11 @@
                             <Label text="Khung thời gian" />
                         </table:label>
                         <table:template>
-                            <Text text="{table>TimeSlot}" />
+                            <Text text=
+                              "{= (${table>TimeSlot} === '01' ) ? 'Full day' 
+                               : ( ${table>TimeSlot} === '02') ? 'Morning' 
+                               : 'Afternoon' 
+                               }" />
                         </table:template>
                     </table:Column>
                     <table:Column id="StartDate" sortProperty="StartDate" filterProperty="StartDate">
@@ -243,8 +155,11 @@
                         <table:template>
                             <Text text=
                             "{path: 'table>StartDate', 
-                             type: 'sap.ui.model.type.DateTime'
-                             
+                             type: 'sap.ui.model.type.DateTime',
+                             formatOptions: {
+                                        pattern: 'dd.MM.yyyy',
+                                        UTC: true
+                                    }
                              }" />
                         </table:template>
                     </table:Column>
@@ -254,7 +169,13 @@
                             <Label text="Ngày kết thúc" />
                         </table:label>
                         <table:template>
-                            <Text text="{path: 'table>EndDate', type: 'sap.ui.model.type.DateTime', formatOptions: { style: 'medium' }}" />
+                            <Text text="{path: 'table>EndDate', 
+                            type: 'sap.ui.model.type.DateTime', 
+                            formatOptions: { style: 'medium', 
+                                        pattern: 'dd.MM.yyyy',
+                                        UTC: true
+                                      }
+                                    }" />
                         </table:template>
                     </table:Column>
 
@@ -272,7 +193,7 @@
                             <Label text="Trạng thái" />
                         </table:label>
                         <table:template>
-                            <ObjectStatus text="{= ${table>Status} === '01' ? 'New' : ${table>Status} === '02' ? 'Approved' : 'Pending' }" inverted="true" icon="sap-icon://information" state="{= ${table>Status} === '01' ? 'Information' : ${table>Status} === '02' ? 'Success' : 'Warning' }" />
+                            <ObjectStatus text="{= ${table>Status} === '01' ? 'New' : ${table>Status} === '02' ? 'Approved' : 'Rejected' }" inverted="true" icon="sap-icon://information" state="{= ${table>Status} === '01' ? 'Information' : ${table>Status} === '02' ? 'Success' : 'Warning' }" />
                         </table:template>
                     </table:Column>
                 </table:columns>

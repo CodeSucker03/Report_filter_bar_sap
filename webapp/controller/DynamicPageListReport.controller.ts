@@ -312,53 +312,6 @@ export default class DynamicPageListReport extends Base {
     this.updateLabelsAndTable();
   }
 
-  // public getFormattedSummaryText(): string {
-  //   let aFiltersWithValues = this.oFilterBar?.retrieveFiltersWithValues();
-  //   console.log(aFiltersWithValues);
-
-  //   if (aFiltersWithValues?.length === 0) {
-  //     return "No filters active";
-  //   }
-
-  //   if (aFiltersWithValues?.length === 1) {
-  //     return (
-  //       aFiltersWithValues?.length +
-  //       " filter active: " +
-  //       aFiltersWithValues?.join(", ")
-  //     );
-  //   }
-  //   return (
-  //     aFiltersWithValues?.length +
-  //     " filters active: " +
-  //     aFiltersWithValues?.join(", ")
-  //   );
-  // }
-
-  // public getFormattedSummaryTextExpanded(): string {
-  //   let aFiltersWithValues = this.oFilterBar?.retrieveFiltersWithValues();
-
-  //   if (aFiltersWithValues?.length === 0) {
-  //     return "No filters active";
-  //   }
-
-  //   let sText = aFiltersWithValues?.length + " filters active";
-  //   //   ,aNonVisibleFiltersWithValues =
-  //   //     this.oFilterBar.retrieveNonVisibleFiltersWithValues();
-
-  //   // if (aFiltersWithValues.length === 1) {
-  //   //   sText = aFiltersWithValues.length + " filter active";
-  //   // }
-
-  //   // if (
-  //   //   aNonVisibleFiltersWithValues &&
-  //   //   aNonVisibleFiltersWithValues.length > 0
-  //   // ) {
-  //   //   sText += " (" + aNonVisibleFiltersWithValues.length + " hidden)";
-  //   // }
-
-  //   return sText;
-  // }
-
   private updateLabelsAndTable(): void {
     this.oTable?.setShowOverlay(true);
     const expandedLabel =
