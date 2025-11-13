@@ -77,7 +77,8 @@
                     </OverflowToolbar>
                 </table:extension>
                 <table:noData>
-                    <IllustratedMessage illustrationType="sapIllus-NoSearchResults" enableVerticalResponsiveness="true" />
+                    <IllustratedMessage illustrationType="sapIllus-NoSearchResults" 
+                    enableVerticalResponsiveness="true" />
                 </table:noData>
                 <table:columns>
                     <table:Column id="RequestId" sortProperty="RequestId" filterProperty="RequestId">

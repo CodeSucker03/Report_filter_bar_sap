@@ -1,10 +1,10 @@
 /*global QUnit*/
-import Controller from "ui5/app/controller/DynamicPageListReport.controller";
+import Controller from "../../../controller/DynamicPageListReport.controller";
 
-QUnit.module("Home Controller");
+QUnit.module("DynamicPageListReport Controller");
 
-QUnit.test("I should test the Home controller", function (assert: Assert) {
-	const oAppController = new Controller("Home");
+QUnit.test("I should test the DynamicPageListReport controller", function (assert: Assert) {
+	const oAppController = new Controller("DynamicPageListReport");
 	oAppController.onInit();
 	assert.ok(oAppController);
 });

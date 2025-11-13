@@ -1,4 +1,5 @@
 /* eslint-disable linebreak-style */
+import Formatter from "../utils/Formatter";
 import type ResourceBundle from "sap/base/i18n/ResourceBundle";
 import type Control from "sap/ui/core/Control";
 import UI5Element from "sap/ui/core/Element";
@@ -11,9 +12,12 @@ import Model from "sap/ui/model/Model";
 import type ODataModel from "sap/ui/model/odata/v2/ODataModel";
 import ResourceModel from "sap/ui/model/resource/ResourceModel";
 import type Component from "../Component";
+import syncStyleClass from "sap/ui/core/syncStyleClass";
+import View from "sap/ui/core/mvc/View";
 
 
 export default class Base extends Controller {
+  public formatter = Formatter;
   public dataType = {};
 
   protected getRouter() {
@@ -41,7 +45,7 @@ export default class Base extends Controller {
   protected getControlId<T = string | null>(control?: UI5Element): T;
   // eslint-disable-next-line no-dupe-class-members
   protected getControlId<T = string | null>(control?: UI5Element) {
-    if (!control) {return null;}
+    if (!control) return null;
     return this.getView()?.getLocalId(control.getId()) as T;
   }
 
@@ -75,32 +79,32 @@ export default class Base extends Controller {
     return this.getComponentModel().metadataLoaded();
   }
 
-//   protected attachControl(control: Control) {
-//     const view = <View>this.getView();
+  protected attachControl(control: Control) {
+    const view = <View>this.getView();
 
-//     const styleClass = this.getOwnerComponent()?.getContentDensityClass();
+    const styleClass = this.getComponent().getContentDensityClass();
 
-//     syncStyleClass(styleClass, view, control);
+    syncStyleClass(styleClass, view, control);
 
-//     view.addDependent(control);
-//   }
+    view.addDependent(control);
+  }
 
-//   protected async loadView<T extends Control>(viewName: string) {
-//     const fragment = <Promise<T>>this.loadFragment({
-//       name: `${this.getAppID()}.view.fragments.${viewName}`
-//     });
+  protected async loadView<T extends Control>(viewName: string) {
+    const fragment = <Promise<T>>this.loadFragment({
+      name: `${this.getAppID()}.view.fragments.${viewName}`,
+    });
 
-//     fragment
-//       .then((control) => {
-//         this.attachControl(control);
-//       })
-//       .catch((error) => {
-//         // eslint-disable-next-line no-console
-//         console.log(error);
-//       });
+    fragment
+      .then((control) => {
+        this.attachControl(control);
+      })
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.log(error);
+      });
 
-//     return fragment;
-//   }
+    return fragment;
+  }
 
   protected getAppID() {
     return <string>this.getComponent().getManifestEntry("/sap.app/id");
@@ -114,9 +118,10 @@ export default class Base extends Controller {
     return this.getControlName(<Control>control) === name;
   }
 
-//   protected displayTarget(options: { target: string; title?: string; description?: string }) {
-//     const { target, title, description } = options;
+  protected displayTarget(options: { target: string; title?: string; description?: string }) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { target, title, description } = options;
 
-//     void this.getRouter().getTargets()?.display(target);
-//   }
+    void this.getRouter().getTargets()?.display(target);
+  }
 }
