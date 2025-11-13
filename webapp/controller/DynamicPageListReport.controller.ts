@@ -1,11 +1,7 @@
 /* eslint-disable no-console */
 import Label from "sap/m/Label";
 import MultiComboBox from "sap/m/MultiComboBox";
- import type {
-  FilterBar$FilterChangeEventParameters
-} from "sap/ui/comp/filterbar/FilterBar";
-import FilterBar from "sap/ui/comp/filterbar/FilterBar";
-import FilterGroupItem from "sap/ui/comp/filterbar/FilterGroupItem";
+
 import PersonalizableInfo from "sap/ui/comp/smartvariants/PersonalizableInfo";
 import SmartVariantManagement from "sap/ui/comp/smartvariants/SmartVariantManagement";
 // import Controller from "sap/ui/core/mvc/Controller";
@@ -25,14 +21,19 @@ import Token from "sap/m/Token";
 import ODataModel from "sap/ui/model/odata/v2/ODataModel";
 import type { LeaveRequestItem, ValueHelpItem } from "../types/pages/maint";
 import type { ODataError, ODataResponse } from "../types/odata";
-import Table from "sap/ui/table/Table";
+
 import MessageToast from "sap/m/MessageToast";
-import Button from "sap/m/Button";
 import Dialog from "sap/m/Dialog";
 import { ValueState } from "sap/ui/core/library";
 import Spreadsheet from "sap/ui/export/Spreadsheet";
 import { EdmType } from "sap/ui/export/library";
 import type { Column } from "../types/utils";
+
+import Table from "sap/ui/table/Table";
+import type { FilterBar$FilterChangeEventParameters } from "sap/ui/comp/filterbar/FilterBar";
+import FilterGroupItem from "sap/ui/comp/filterbar/FilterGroupItem";
+import FilterBar from "sap/ui/comp/filterbar/FilterBar";
+import { RadioButtonGroup$SelectEvent } from "sap/m/RadioButtonGroup";
 
 interface IFilterData {
   fieldName: string;
@@ -41,30 +42,20 @@ interface IFilterData {
 }
 
 export default class DynamicPageListReport extends Base {
-  private Model: JSONModel | null;
   private SmartVariantManagement: SmartVariantManagement | null;
   private ExpandedLabel: Label | null;
   private SnappedLabel: Label | null;
-  private FilterBar: FilterBar | null;
-  private Table: Table | null;
+  private filterBar: FilterBar | null;
+  private table: Table | null;
   private editDialog: Dialog;
   private addDialog: Dialog;
 
-  private async logLoadedData(jsonModel: JSONModel): Promise<void> {
-    await jsonModel.loadData(
-      sap.ui.require.toUrl("ui5/app/model/model.json"),
-      undefined,
-      false
-    );
-  }
-
   public override onExit(): void | undefined {
-    this.Model = null;
     this.SmartVariantManagement = null;
     this.ExpandedLabel = null;
     this.SnappedLabel = null;
-    this.FilterBar = null;
-    this.Table = null;
+    this.filterBar = null;
+    this.table = null;
   }
 
   public override onInit(): void {
@@ -90,34 +81,38 @@ export default class DynamicPageListReport extends Base {
     this.fetchData = this.fetchData.bind(this);
     this.getFiltersWithValues = this.getFiltersWithValues.bind(this);
 
-    this.SmartVariantManagement = this.getView()?.byId(
+    this.SmartVariantManagement = this.getControlById(
       "svm"
-    ) as SmartVariantManagement;
+    );
+
     this.ExpandedLabel = this.getControlById<Label>("expandedLabel");
     this.SnappedLabel = this.getControlById<Label>("snappedLabel");
-    this.FilterBar = this.getControlById<FilterBar>("filterBar");
-    console.log("FilterBar:", this.FilterBar);
-    this.Table = this.getView()?.byId("table") as Table;
 
-    this.FilterBar.registerFetchData(this.fetchData);
-    this.FilterBar.registerApplyData(
+    this.filterBar = this.getControlById<FilterBar>("filterBar");
+    this.table = this.getControlById<Table>("table");
+
+    this.filterBar?.registerFetchData(this.fetchData);
+
+    this.filterBar?.registerApplyData(
       this.applyData as unknown as (p1: string, p2: string) => void
     );
-    this.FilterBar.registerGetFiltersWithValues(this.getFiltersWithValues);
+
+    this.filterBar?.registerGetFiltersWithValues(this.getFiltersWithValues);
 
     let PersInfo = new PersonalizableInfo({
       type: "filterBar",
       keyName: "persistencyKey",
       dataSource: "",
-      control: this.FilterBar,
+      control: this.filterBar,
     });
-    this.SmartVariantManagement.addPersonalizableControl(PersInfo);
-    this.SmartVariantManagement.initialise(() => {}, this.FilterBar);
+    this.SmartVariantManagement?.addPersonalizableControl(PersInfo);
+    this.SmartVariantManagement?.initialise(() => {}, this.filterBar);
   }
 
   // #region Lifecycle hook
   public override onAfterRendering(): void | undefined {
-    this.FilterBar?.fireSearch();
+    this.filterBar?.fireSearch();
+
     this.onGetMasterData()
       .then(() => {
         console.log("Master data loaded successfully onInit");
@@ -130,7 +125,7 @@ export default class DynamicPageListReport extends Base {
 
   public applyData = (aData: IFilterData[]): void => {
     aData.forEach((DataObject) => {
-      let control = this.FilterBar?.determineControlByName(
+      let control = this.filterBar?.determineControlByName(
         DataObject.fieldName,
         DataObject.groupName
       );
@@ -175,7 +170,7 @@ export default class DynamicPageListReport extends Base {
   };
 
   public fetchData = () => {
-    return this.FilterBar?.getAllFilterItems(true).reduce<IFilterData[]>(
+    return this.filterBar?.getAllFilterItems(true).reduce<IFilterData[]>(
       (acc, item: FilterGroupItem) => {
         let control = item.getControl();
         let groupName = item.getGroupName();
@@ -232,9 +227,10 @@ export default class DynamicPageListReport extends Base {
   };
 
   private getFiltersWithValues = (): FilterGroupItem[] | undefined => {
-    return this.FilterBar?.getFilterGroupItems().reduce(
+    return this.filterBar?.getFilterGroupItems().reduce(
       (acc: FilterGroupItem[], oFilterGroupItem: FilterGroupItem) => {
         let control = oFilterGroupItem.getControl();
+
         if (control) {
           switch (true) {
             case this.isControl<Input>(control, "sap.m.Input"):
@@ -300,23 +296,25 @@ export default class DynamicPageListReport extends Base {
   public onSelectionChange(
     oEvent: FilterBar$FilterChangeEventParameters
   ): void {
+
     this.SmartVariantManagement?.currentVariantSetModified(true);
-    this.FilterBar?.fireFilterChange(oEvent);
+    this.filterBar?.fireFilterChange(oEvent);
   }
 
   public onFilterChange(): void {
-    this.updateLabelsAndTable();
+    this.updateLabelsAndtable();
   }
 
   public onAfterVariantLoad(): void {
-    this.updateLabelsAndTable();
+    this.updateLabelsAndtable();
   }
 
-  private updateLabelsAndTable(): void {
-    this.Table?.setShowOverlay(true);
-    const expandedLabel =
-      this.FilterBar?.retrieveFiltersWithValuesAsTextExpanded();
-    const snappedLabel = this.FilterBar?.retrieveFiltersWithValuesAsText();
+  private updateLabelsAndtable(): void {
+    this.table?.setShowOverlay(true);
+    
+    const expandedLabel = this.filterBar?.retrieveFiltersWithValuesAsTextExpanded();
+    const snappedLabel = this.filterBar?.retrieveFiltersWithValuesAsText();
+
     this.ExpandedLabel?.setText(expandedLabel);
     this.SnappedLabel?.setText(snappedLabel);
   }
@@ -326,35 +324,39 @@ export default class DynamicPageListReport extends Base {
     const table = this.byId("table") as Table;
     const SelectedIndices = table.getSelectedIndices();
 
-    const tableModel = this.getView()?.getModel("table") as JSONModel;
-    tableModel.setProperty("/selectedIndices", SelectedIndices);
-    
-    const oEditButton = this.byId("editButton") as Button;
-    const oDeleteButton = this.byId("deleteButton") as Button;
+    const tableModel = this.getModel("table");
+    tableModel.setProperty("/selectedIndices",[...SelectedIndices]);
 
     // exactly one row is selected
-    const bSingleSelection = SelectedIndices.length === 1;
+    const SingleSelection = SelectedIndices.length === 1;
 
-    oEditButton.setEnabled(bSingleSelection);
-    oDeleteButton.setEnabled(bSingleSelection);
-
-    if (bSingleSelection) {
+    if (SingleSelection) {
       const Context = table.getContextByIndex(SelectedIndices[0]);
+
       const path = Context?.getPath() || "unknown";
-      console.log(Context?.getObject());
+
+
       const SelectedData = Context?.getObject();
+
       const oEditModel = new JSONModel(Object.assign({}, SelectedData));
-      this.getView()?.setModel(oEditModel, "edit");
+
+      this.setModel(oEditModel, "edit");
+
       MessageToast.show(`Selected row: ${path}`);
     } else if (SelectedIndices.length === 0) {
+
       MessageToast.show("No item selected");
+
     } else {
+
       MessageToast.show(`${SelectedIndices.length} rows selected`);
+      
     }
   }
+  
   // #Local data search function
   // public onSearch() {
-  //   let aTableFilters = this.oFilterBar
+  //   let atableFilters = this.ofilterBar
   //     ?.getFilterGroupItems()
   //     .reduce((aResult: Filter[], oFilterGroupItem: FilterGroupItem) => {
   //       let oControl = oFilterGroupItem.getControl() as MultiComboBox,
@@ -378,17 +380,17 @@ export default class DynamicPageListReport extends Base {
 
   //       return aResult;
   //     }, []);
-  //   console.log("talbe", aTableFilters);
+  //   console.log("talbe", atableFilters);
 
   //   // Apply filter to the table binding
-  //   const oBinding = this.oTable?.getBinding("rows") as ListBinding;
-  //   oBinding.filter(aTableFilters);
+  //   const oBinding = this.otable?.getBinding("rows") as ListBinding;
+  //   oBinding.filter(atableFilters);
 
-  //   this.oTable?.setShowOverlay(false);
+  //   this.otable?.setShowOverlay(false);
   // }
   // end local
   private getFilters(): Filter[] {
-    return (this.FilterBar?.getFilterGroupItems() ?? []).reduce(
+    return (this.filterBar?.getFilterGroupItems() ?? []).reduce(
       (aResult: Filter[], item: FilterGroupItem) => {
         let control = item.getControl();
         let fieldName = item.getName();
@@ -466,28 +468,30 @@ export default class DynamicPageListReport extends Base {
 
   // #region Search
   public onSearch() {
-    const DataModel = this.getView()?.getModel() as ODataModel;
-    const tableModel = this.getView()?.getModel("table") as JSONModel;
+    const DataModel = this.getModel<ODataModel>();
+    const tableModel = this.getModel("table");
 
-    this.Table?.setBusy(true);
+    this.table?.setBusy(true);
     console.log(this.getFilters());
 
     DataModel.read("/LeaveRequestSet", {
       filters: this.getFilters(),
       urlParameters: {},
       success: (response: ODataResponse<LeaveRequestItem[]>) => {
-        this.Table?.setBusy(false);
+        this.table?.setBusy(false);
 
         tableModel.setProperty("/rows", response.results);
       },
       error: (error: ODataError) => {
-        this.Table?.setBusy(false);
+        this.table?.setBusy(false);
 
         console.error("OData read error:", error);
       },
     });
-    this.Table?.setShowOverlay(false);
+    this.table?.setShowOverlay(false);
   }
+
+   // Format Function
   public formatStatusState(statusKey: string): ValueState {
     const map: Record<string, ValueState> = {
       "01": ValueState.Information,
@@ -500,8 +504,8 @@ export default class DynamicPageListReport extends Base {
   // #region get MasterData
   private async onGetMasterData(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      const DataModel = this.getView()?.getModel() as ODataModel;
-      const masterModel = this.getView()?.getModel("master") as JSONModel;
+      const DataModel =  this.getModel<ODataModel>();
+      const masterModel = this.getModel("master");
 
       if (!DataModel) {
         reject("OData model not found");
@@ -513,7 +517,9 @@ export default class DynamicPageListReport extends Base {
           const status: ValueHelpItem[] = [];
           const leaveType: ValueHelpItem[] = [];
           const timeSlot: ValueHelpItem[] = [];
+          
           console.log("OData read success:", response.results);
+
           response.results.forEach((item: ValueHelpItem) => {
             switch (item.FieldName) {
               case "Status":
@@ -547,28 +553,26 @@ export default class DynamicPageListReport extends Base {
 
   // # open dialog
   async onOpenAddDialog(): Promise<void> {
-    this.addDialog ??= (await this.loadFragment({
-      name: "ui5.app.view.AddDialog",
-    })) as Dialog;
-    this.addDialog.open();
+     this.addDialog ??= await this.loadView("AddDialog");
+     this.addDialog.open();
   }
-  onCloseAddDialog(): void {
-    // note: We don't need to chain to the pDialog promise, since this event-handler
-    // is only called from within the loaded dialog itself.
+
+  onCloseAddDialog() : void{
     (this.byId("addDialog") as Dialog)?.close();
   }
 
   async onOpenEdit(): Promise<void> {
-    this.editDialog ??= (await this.loadFragment({
-      name: "ui5.app.view.editDialog",
-    })) as Dialog;
+    this.editDialog ??= await this.loadView("EditDialog");
     this.editDialog.open();
   }
+
+
   onCloseEditDialog(): void {
     // note: We don't need to chain to the pDialog promise, since this event-handler
     // is only called from within the loaded dialog itself.
     (this.byId("editDialog") as Dialog)?.close();
   }
+
 
   public onExportExcel(): void {
     const Cols: Column[] = [
@@ -608,4 +612,23 @@ export default class DynamicPageListReport extends Base {
         console.error("Spreadsheet export error:", err);
       });
   }
+
+
+  public timeSlotToIndex (sValue: string) : number {
+    if (!sValue) {return 0;}
+    return parseInt(sValue, 10) - 1;
+  }
+
+  
+  public indexToTimeSlot (iIndex: number) : string {
+    return (iIndex + 1).toString().padStart(2, "0");
+  }
+
+  public onTimeSlotSelect(event: RadioButtonGroup$SelectEvent): void {
+    const selectedIndex = event.getSource().getSelectedIndex();
+    const newValue = this.indexToTimeSlot(selectedIndex);
+
+    this.getModel("edit").setProperty("/TimeSlot", newValue);
+  }
+
 }

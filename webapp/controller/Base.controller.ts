@@ -45,6 +45,7 @@ export default class Base extends Controller {
   protected getControlId<T = string | null>(control?: UI5Element): T;
   // eslint-disable-next-line no-dupe-class-members
   protected getControlId<T = string | null>(control?: UI5Element) {
+    
     if (!control) return null;
     return this.getView()?.getLocalId(control.getId()) as T;
   }

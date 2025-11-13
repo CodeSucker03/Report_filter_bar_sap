@@ -24,7 +24,12 @@
 
                 <VBox class="sapUiSmallMarginBottom">
                     <Label text="Time Slot" required="true" width="8rem" />
-                    <RadioButtonGroup id="TimeSlotE" columns="3" selectedIndex="{edit>/TimeSlot}" buttons="{ path: 'master>/TimeSlot', templateShareable: false }" class="sapUiTinyMarginBegin">
+                    <RadioButtonGroup id="TimeSlotE" columns="3" 
+                    selectedIndex="{
+                    path: 'edit>/TimeSlot',
+                    formatter: '.timeSlotToIndex'
+                    }" select=".onTimeSlotSelect" 
+                    buttons="{ path: 'master>/TimeSlot', templateShareable: false }" class="sapUiTinyMarginBegin">
                         <buttons>
                             <RadioButton text="{master>FieldValue}" />
                         </buttons>

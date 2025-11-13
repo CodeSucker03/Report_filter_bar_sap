@@ -64,12 +64,18 @@
                 <table:extension>
                     <OverflowToolbar class="sapMTBHeader-CTX">
                         <Title text="Leave Request" />
+
                         <ToolbarSpacer />
-                        <Button id="addButton" text="Add" tooltip="Add" type="Emphasized" 
+                        <Button id="addButton" text="Add" tooltip="Add" type="Emphasized"
+                       
                         icon="sap-icon://add" press=".onOpenAddDialog" />
-                        <Button id="editButton" text="Edit" tooltip="Edit" type="Emphasized" 
-                        icon="sap-icon://edit" enabled="false" press=".onOpenEdit" />
-                        <Button id="deleteButton" text="Delete" tooltip="Delete" type="Reject" icon="sap-icon://delete" enabled="false" />
+
+                        <Button id="editButton" text="Edit" tooltip="Edit" type="Emphasized"
+                        enabled="{= ${table>/selectedIndices}.length === 1 }"
+                        icon="sap-icon://edit" press=".onOpenEdit" />
+
+                        <Button id="deleteButton" text="Delete" tooltip="Delete" type="Reject" icon="sap-icon://delete"
+                        enabled="{= ${table>/selectedIndices}.length === 1 }" />
 
                         <ToolbarSeparator />
                         <Button icon="sap-icon://excel-attachment" tooltip="Export to Excel" 
