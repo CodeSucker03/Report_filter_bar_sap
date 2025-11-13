@@ -33,7 +33,7 @@ import Table from "sap/ui/table/Table";
 import type { FilterBar$FilterChangeEventParameters } from "sap/ui/comp/filterbar/FilterBar";
 import FilterGroupItem from "sap/ui/comp/filterbar/FilterGroupItem";
 import FilterBar from "sap/ui/comp/filterbar/FilterBar";
-import { RadioButtonGroup$SelectEvent } from "sap/m/RadioButtonGroup";
+import type { RadioButtonGroup$SelectEvent } from "sap/m/RadioButtonGroup";
 
 interface IFilterData {
   fieldName: string;
