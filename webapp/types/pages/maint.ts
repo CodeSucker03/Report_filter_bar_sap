@@ -16,3 +16,12 @@ export interface ValueHelpItem {
   FieldKey: string,
   FieldValue: string
 }
+
+export interface LeaveRequestForm {
+  LeaveType: string;
+  StartDate: string;
+  EndDate: string;
+  Reason: string;
+  TimeSlot: string;
+  TimeSlotIndex: number;
+}

@@ -22,7 +22,8 @@
         <f:header>
             <f:DynamicPageHeader>
                 <f:content>
-                    <fb:FilterBar id="filterBar" persistencyKey="EmployeeTable" useToolbar="false" search=".onSearch" filterChange="onFilterChange" afterVariantLoad="onAfterVariantLoad">
+                    <fb:FilterBar id="filterBar" persistencyKey="EmployeeTable" useToolbar="false"
+                     search=".onSearch" showClearOnFB="true" filterChange="onFilterChange" afterVariantLoad="onAfterVariantLoad">
                         <fb:filterGroupItems>
                             <fb:FilterGroupItem name="StartDate" label="Ngày bắt đầu" groupName="Group1" visibleInFilterBar="true">
                                 <fb:control>
@@ -68,14 +69,15 @@
                         <ToolbarSpacer />
                         <Button id="addButton" text="Add" tooltip="Add" type="Emphasized"
                        
-                        icon="sap-icon://add" press=".onOpenAddDialog" />
+                        icon="sap-icon://add" press=".onOpenCreateRequest" />
 
                         <Button id="editButton" text="Edit" tooltip="Edit" type="Emphasized"
                         enabled="{= ${table>/selectedIndices}.length === 1 }"
-                        icon="sap-icon://edit" press=".onOpenEdit" />
+                        icon="sap-icon://edit" press=".onOpenEditRequest" />
 
-                        <Button id="deleteButton" text="Delete" tooltip="Delete" type="Reject" icon="sap-icon://delete"
-                        enabled="{= ${table>/selectedIndices}.length === 1 }" />
+                        <Button id="deleteButton" text="Delete" tooltip="Delete" 
+                        type="Reject" icon="sap-icon://delete"
+                        enabled="{= ${table>/selectedIndices}.length === 1 }" press=".onDeleteRequest" />
 
                         <ToolbarSeparator />
                         <Button icon="sap-icon://excel-attachment" tooltip="Export to Excel" 
