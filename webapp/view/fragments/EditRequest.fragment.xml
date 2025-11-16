@@ -5,6 +5,7 @@
 >
     <Dialog
         id="EditRequest"
+        afterClose=".onAfterCloseEditRequest"
         title="Edit Leave Request"
     >
         <content>

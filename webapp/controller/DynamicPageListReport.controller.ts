@@ -517,7 +517,7 @@ export default class DynamicPageListReport extends Base {
 
  
 
-  // #region get MasterData
+  // #region  MasterData
   private async onGetMasterData(): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const DataModel = this.getModel<ODataModel>();
@@ -567,32 +567,11 @@ export default class DynamicPageListReport extends Base {
     });
   }
 
-  // async onOpencreateRequestDialog(): Promise<void> {
-  //   this.createRequestDialog ??= await this.loadView("createRequestDialog");
-  //   this.createRequestDialog.open();
-  // }
-
-  // onClosecreateRequestDialog(): void {
-  //   (this.byId("createRequestDialog") as Dialog)?.close();
-  // }
-
-  // async onOpenEdit(): Promise<void> {
-  //   this.editRequestDialog ??= await this.loadView("editRequestDialog");
-  //   this.editRequestDialog.open();
-  // }
-
-  // onCloseeditRequestDialog(): void {
-  //   // note: We don't need to chain to the pDialog promise, since this event-handler
-  //   // is only called from within the loaded dialog itself.
-  //   (this.byId("editRequestDialog") as Dialog)?.close();
-  // }
-
    private onRefresh() {
     this.filterBar?.fireSearch();
   }
 
-
-  // #region Open Edit Dialog
+  // #region Open Edit 
   public async onOpenEditRequest() {
    
     try {
@@ -613,7 +592,9 @@ export default class DynamicPageListReport extends Base {
         this.editRequestDialog.setModel(new JSONModel(form),"form");
 
         this.editRequestDialog.open();
+
     } catch (error) {
+
       console.log(error);
     }
   }
@@ -631,16 +612,26 @@ export default class DynamicPageListReport extends Base {
 
     const oDataModel = this.getModel<ODataModel>();
 
+
+    const indices = this.table?.getSelectedIndices();
+    const item = <LeaveRequestItem>this.table?.getContextByIndex(indices[0])?.getObject();
+    const key = oDataModel.createKey("/LeaveRequestSet", item);
+    
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { LeaveType, StartDate, EndDate, Reason, TimeSlot } = formData;
+    
+    const StartDateFormatted = this.formatter.formatDate(StartDate,"dd.MM.yyyy", "yyyyMMdd");
+    const EndDateFormatted = this.formatter.formatDate(EndDate,"dd.MM.yyyy", "yyyyMMdd");
+
 
     dialog.setBusy(true);
     oDataModel.update(
-      "/LeaveRequestSet",
+      key,
       {
         LeaveType,
-        StartDate: this.formatter.toUTCDate(StartDate),
-        EndDate: this.formatter.toUTCDate(EndDate),
+        StartDate: this.formatter.toUTCDate(StartDateFormatted),
+        EndDate: this.formatter.toUTCDate(EndDateFormatted),
         Reason,
         TimeSlot
       },
@@ -651,7 +642,7 @@ export default class DynamicPageListReport extends Base {
 
           MessageToast.show("Leave request updated successfully.");
 
-          this.onCloseCreateRequest();
+          this.onCloseEditRequest();
 
           this.onRefresh();
         },
@@ -663,6 +654,11 @@ export default class DynamicPageListReport extends Base {
       }
     );
  }
+
+  public onAfterCloseEditRequest(event: Dialog$AfterCloseEvent) {
+    const dialog = event.getSource();
+    dialog.setModel(null, "form");
+  } 
   
   // #region Create request dialog
   public async onOpenCreateRequest() {

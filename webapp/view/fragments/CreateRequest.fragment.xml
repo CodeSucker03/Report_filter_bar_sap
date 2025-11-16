@@ -50,6 +50,7 @@
                     valueFormat="yyyyMMdd"
                     displayFormat="dd.MM.yyyy"
                     value="{form>EndDate}"
+                    
                 />
 
                 <Label
