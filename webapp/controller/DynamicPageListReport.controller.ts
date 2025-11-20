@@ -612,26 +612,20 @@ export default class DynamicPageListReport extends Base {
 
     const oDataModel = this.getModel<ODataModel>();
 
-
     const indices = this.table?.getSelectedIndices();
     const item = <LeaveRequestItem>this.table?.getContextByIndex(indices[0])?.getObject();
+
     const key = oDataModel.createKey("/LeaveRequestSet", item);
     
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { LeaveType, StartDate, EndDate, Reason, TimeSlot } = formData;
     
-    const StartDateFormatted = this.formatter.formatDate(StartDate,"dd.MM.yyyy", "yyyyMMdd");
-    const EndDateFormatted = this.formatter.formatDate(EndDate,"dd.MM.yyyy", "yyyyMMdd");
-
-
     dialog.setBusy(true);
     oDataModel.update(
       key,
       {
         LeaveType,
-        StartDate: this.formatter.toUTCDate(StartDateFormatted),
-        EndDate: this.formatter.toUTCDate(EndDateFormatted),
+        StartDate: this.formatter.toUTCDate(StartDate,"dd.MM.yyyy"),
+        EndDate: this.formatter.toUTCDate(EndDate,"dd.MM.yyyy"),
         Reason,
         TimeSlot
       },
@@ -840,7 +834,7 @@ export default class DynamicPageListReport extends Base {
   // end
 
 
-  // #Convert string to int for timeslot
+  // #region Convert string to int for timeslot
   public timeSlotToIndex(sValue: string): number {
     if (!sValue) {
       return 0;

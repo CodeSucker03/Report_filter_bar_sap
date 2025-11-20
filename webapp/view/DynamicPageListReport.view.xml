@@ -198,6 +198,7 @@
                         </table:template>
                     </table:Column>
 
+
                     <table:Column id="Status" sortProperty="Status" filterProperty="Status">
                         <table:label>
                             <Label text="Trạng thái" />
